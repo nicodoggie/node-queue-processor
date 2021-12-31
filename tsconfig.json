@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "noImplicitAny": true,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "moduleResolution": "Node",
+      "sourceMap": true,
+      "outDir": "dist",
+      "lib": [
+          "es5",
+          "es2015.promise"
+      ]
+    },
+    "typeRoots": [
+        "node_modules/@types"
+    ],
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}
