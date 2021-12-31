@@ -8,7 +8,11 @@
   "keywords": [
     "pubsub",
     "subscriber",
-    "worker"
+    "worker",
+    "queue",
+    "processor",
+    "message",
+    "pull"
   ],
   "main": "dist/index.js",
   "license": "MIT",
