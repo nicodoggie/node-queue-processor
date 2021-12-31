@@ -5,6 +5,11 @@
     "name": "Kelvin Joaquin",
     "email": "adiktus9116@yahoo.com"
   },
+  "keywords": [
+    "pubsub",
+    "subscriber",
+    "worker"
+  ],
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
