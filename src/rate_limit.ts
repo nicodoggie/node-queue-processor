@@ -81,7 +81,7 @@ class RedisCounter extends Counter {
                 .incr(this.key)
                 .expireNX(this.key, this.expiry)
                 .exec();
-            logger.trace(`increment shit`, value);
+            logger.trace(`increment`, value);
             return value;
         } catch (error) {
             logger.error(error);
