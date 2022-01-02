@@ -1,5 +1,5 @@
-import { PubsubQueue } from './pubsub';
+import { GooglePubsubQueue } from './google_pubsub';
 
 export {
-    PubsubQueue
+    GooglePubsubQueue
 }

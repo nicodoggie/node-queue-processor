@@ -60,19 +60,22 @@ class Manager {
                     logger.trace(`pulling a message`);
                     // pull a job
                     const message:Message = await this.queue.pull();
-                    logger.trace(`successully pulled a message`, { name: message.getName() });
-                    if (!has(this.workersMap, message.getName())) {
-                        // TODO: throw custom error with details so it wouldn't be retried
-                        this.errorHandler(new Error(`handler "${message.getName()}" doesn't exists`));
-                        // go to next message
-                        continue;
-                    }
 
-                    const workerIndex = get(this.workersMap, message.getName(), false)
-                    if (await this.workers[workerIndex].run(message.getData()) === false 
-                    && this.workers[workerIndex].shouldRetry()) {
-                        logger.trace(`processing failed. republishing message..`, { name: message.getName(), data: message.getData() })
-                        await this.queue.push(message.getName(), message.getData());
+                    if (message) {
+                        logger.trace(`successully pulled a message`, { name: message.getName() });
+                        if (!has(this.workersMap, message.getName())) {
+                            // TODO: throw custom error with details so it wouldn't be retried
+                            this.errorHandler(new Error(`handler "${message.getName()}" doesn't exists`));
+                            // go to next message
+                            continue;
+                        }
+
+                        const workerIndex = get(this.workersMap, message.getName(), false)
+                        if (await this.workers[workerIndex].run(message.getData()) === false 
+                        && this.workers[workerIndex].shouldRetry()) {
+                            logger.trace(`processing failed. republishing message..`, { name: message.getName(), data: message.getData() })
+                            await this.queue.push(message.getName(), message.getData());
+                        }
                     }
                 } catch (error) {
                     this.errorHandler(error);

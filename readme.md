@@ -7,7 +7,7 @@ Built on NodeJS. This application will process queue messages.
 
 ## Supported Queues
 - Google Pub/Sub
-- Redis ***soon**
+- AWS SNS ***soon**
 
 # Sample
 ```js
