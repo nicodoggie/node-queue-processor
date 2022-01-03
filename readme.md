@@ -9,7 +9,7 @@ Built on NodeJS. This application will process queue messages.
 - Google Pub/Sub
 - AWS SNS ***soon**
 
-# Sample
+# Sample Code
 ```js
 const { Manager, Worker, RateLimit } = require('node-queue-processor');
 const config = require('../config');
@@ -44,4 +44,19 @@ async function main() {
 }
 
 main();
+```
+
+# Sample Message
+Message body:
+```js
+{
+  "hello": "world"
+}
+```
+
+Message attributes:
+```js
+{
+  "type": "sample-handler"
+}
 ```
