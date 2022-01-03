@@ -5,6 +5,10 @@
     "name": "Kelvin Joaquin",
     "email": "adiktus9116@yahoo.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/github-kelvin/node-queue-processor.git"
+  },
   "keywords": [
     "pubsub",
     "subscriber",
