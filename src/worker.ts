@@ -1,23 +1,25 @@
 import { randomUUID } from 'crypto';
 import { logger } from './logger';
 import { RateLimit } from './rate_limit';
+import { EventEmitter } from 'events';
 
-class Worker {
+class Worker extends EventEmitter {
     private process: (arg: any) => Promise<string>;
-    private errorHandler: (error:Error) => any;
     private rateLimit: RateLimit;
     private retry: boolean;
     private id: string;
 
     constructor(process: (arg: any) => Promise<string>, rateLimit:RateLimit = null, retry: boolean = true) {
+        super();
+
         this.id = randomUUID();
         logger.child({ id: this.id }).trace(`worker created`);
 
         this.rateLimit = rateLimit;
         this.process = process;
-        this.errorHandler = (error) => {
+        this.on('error', (error) => {
             logger.child({ id: this.id }).error(error);
-        }
+        });
         this.retry = retry;
     }
 
@@ -35,7 +37,7 @@ class Worker {
             // should return true for success
             return await this.process(data);
         } catch (error) {
-            this.errorHandler(new Error(error.message));
+            this.emit('error', new Error(error.message));
             // failed
             return false;
         }

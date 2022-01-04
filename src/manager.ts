@@ -5,25 +5,31 @@ import { Worker } from './worker';
 import { Message } from './message';
 import { logger } from './logger';
 
-class Manager {
+import { EventEmitter } from 'events';
+
+class Manager extends EventEmitter {
     private workers: Worker[] = [];
     private workersMap: object = {};
     private queue: QueueModel;
     private runMultiple: boolean = false;
-    private processing: boolean = false;
-    private errorHandler: (error:Error) => void;
+    private processing: boolean = true;
 
     constructor(queue: QueueModel,
         runMultiple: boolean = false) {
+        super();
+
         // validate values
         if (queue instanceof QueueModel === false) {
             throw new Error('Invalid queue instance')
         }
         this.queue = queue;
         this.runMultiple = runMultiple;
-        this.errorHandler = (error) => {
+        this.on('error', (error:Error) => {
             logger.error(error);
-        }
+        });
+        this.on('end', () => {
+            logger.trace('Manager ended');
+        });
     }
 
     canRunMultiple() {
@@ -54,8 +60,8 @@ class Manager {
         logger.trace(`manager started`);
         let counter = 0;
         do {
-            // check if something is being processed
-            if (!this.processing) {
+            // check if stop have been triggered
+            if (this.processing) {
                 try {
                     logger.trace(`pulling a message`);
                     // pull a job
@@ -65,7 +71,7 @@ class Manager {
                         logger.trace(`successully pulled a message`, { name: message.getName() });
                         if (!has(this.workersMap, message.getName())) {
                             // TODO: throw custom error with details so it wouldn't be retried
-                            this.errorHandler(new Error(`handler "${message.getName()}" doesn't exists`));
+                            this.emit('error', new Error(`handler "${message.getName()}" doesn't exists`));
                             // go to next message
                             continue;
                         }
@@ -78,14 +84,17 @@ class Manager {
                         }
                     }
                 } catch (error) {
-                    this.errorHandler(error);
+                    this.emit('error', error);
                 }
+            } else {
+                this.emit('end');
             }
         } while (limit === 0 || counter++ < limit);
     }
 
-    async end() {
+    async stop() {
         // wait for processing to finish
+        this.processing = false;
     }
 }
 
