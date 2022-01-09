@@ -36,7 +36,6 @@ class AwsSqsQueue extends QueueModel {
             apiVersion: version,
         })
         this.messageParser = messageParser;
-        this.messageFormatter = messageFormatter;
     }
 
     async pull() {
@@ -46,6 +45,7 @@ class AwsSqsQueue extends QueueModel {
             AttributeNames: [ 'All' ],
             MessageAttributeNames: [ 'All' ],
             MaxNumberOfMessages: '1', // one message at a time
+            WaitTimeSeconds: 20, // enable long polling
         });
         const response = await request.promise();
 
@@ -73,7 +73,7 @@ class AwsSqsQueue extends QueueModel {
     async push(type:string, data:object) {
         const request = this.sqsClient.sendMessage({
             QueueUrl: this.queueUrl,
-            MessageBody: data,
+            MessageBody: JSON.stringify(data),
             MessageAttributes: {
                 type: {
                     DataType: "String",
