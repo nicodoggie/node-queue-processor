@@ -7,12 +7,24 @@ Built on NodeJS. This application will process queue messages.
 
 ## Supported Queues
 - Google Pub/Sub
-- AWS SNS ***soon**
+- AWS SNS
+- RabbitMQ **soon**
 
 # Sample Code
 ```js
 const { Manager, Worker, RateLimit } = require('node-queue-processor');
 const config = require('../config');
+
+// AWS SQS
+const Queue = new AwsSqsQueue(
+    {
+        access_key: config.accessKey,
+        secret_access_key: config.secretAccessKey,
+    },
+    config.queueUrl
+);
+
+// OR Google Pub/Sub
 const Queue = new PubsubQueue(
     config.projectId,
     config.keyfile,

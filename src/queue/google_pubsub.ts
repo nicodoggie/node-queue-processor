@@ -7,14 +7,7 @@ import { Message } from '../message';
 
 import { logger } from '../logger';
 
-interface PublishMessageType {
-    type: string;
-}
-
-interface PublishMessage {
-    data: Buffer,
-    attributes: PublishMessageType
-}
+import { PublishMessage, PublishMessageType } from './publish_message';
 
 class GooglePubsubQueue extends QueueModel {
     private subClient:any;

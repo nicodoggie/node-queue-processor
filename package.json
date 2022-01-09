@@ -1,6 +1,6 @@
 {
   "name": "node-queue-processor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": {
     "name": "Kelvin Joaquin",
     "email": "adiktus9116@yahoo.com"
@@ -10,6 +10,7 @@
     "url": "https://github.com/github-kelvin/node-queue-processor.git"
   },
   "keywords": [
+    "sqs",
     "pubsub",
     "subscriber",
     "worker",
@@ -39,6 +40,7 @@
     "@google-cloud/pubsub": "^2.18.4",
     "@types/ioredis": "^4.28.5",
     "@types/redis": "^4.0.11",
+    "aws-sdk": "^2.1053.0",
     "ioredis": "^4.28.2",
     "lodash": "^4.17.21",
     "pino": "^7.6.2"
