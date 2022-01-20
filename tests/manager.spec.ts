@@ -123,4 +123,35 @@ describe('manager class', () => {
         instance.attachWorker('test-retry', worker);
         instance.start(5);
     });
+
+    it('should trigger rate limit from redis', () => {
+        const messageData = { sample: true };
+        class TestQueue extends QueueModel {
+            pull() {
+                return new Promise((res, rej) => {
+                    res(new Message('test-retry', messageData));
+                });
+            }
+            push(type:string, data:object) {
+                return new Promise((res, rej) => {
+                    res(true);
+                });
+            }
+        }
+
+        const processor:any = async (data:any) => {
+            console.log(new Date().getTime());
+            expect(data).to.equal(messageData);
+        };
+        const worker = new Worker(
+            processor,
+            new RateLimit({
+                process_per_period: 3,
+                period: 5,
+            })
+        );
+        const instance = new Manager(new TestQueue());
+        instance.attachWorker('test-retry', worker);
+        instance.start(5);
+    });
 });

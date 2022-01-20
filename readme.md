@@ -25,7 +25,7 @@ const Queue = new AwsSqsQueue(
 );
 
 // OR Google Pub/Sub
-const Queue = new PubsubQueue(
+const Queue = new GooglePubsubQueue(
     config.projectId,
     config.keyfile,
     config.subscription,

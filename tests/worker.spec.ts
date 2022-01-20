@@ -37,6 +37,12 @@ describe('worker class', () => {
             new RateLimit({
                 process_per_period: 2,
                 period: 5,
+            }, {
+                id: 'test',
+                redisConnection: {
+                    host: '127.0.0.1',
+                    port: 6379
+                }
             })
         );
 
