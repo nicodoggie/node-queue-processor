@@ -1,6 +1,7 @@
 import { Manager } from '../src/manager';
 import { QueueModel } from '../src/queue/abstract_queue';
 import { Worker } from '../src/worker';
+import { RateLimit } from '../src/rate_limit';
 import { Message } from '../src/message';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
@@ -91,5 +92,35 @@ describe('manager class', () => {
         const instance = new Manager(new TestQueue());
         instance.attachWorker('test-retry', worker);
         instance.start(1);
+    });
+
+    it('should trigger rate limit', () => {
+        const messageData = { sample: true };
+        class TestQueue extends QueueModel {
+            pull() {
+                return new Promise((res, rej) => {
+                    res(new Message('test-retry', messageData));
+                });
+            }
+            push(type:string, data:object) {
+                return new Promise((res, rej) => {
+                    res(true);
+                });
+            }
+        }
+
+        const processor:any = async (data:any) => {
+            expect(data).to.equal(messageData);
+        };
+        const worker = new Worker(
+            processor,
+            new RateLimit({
+                process_per_period: 2,
+                period: 5,
+            })
+        );
+        const instance = new Manager(new TestQueue());
+        instance.attachWorker('test-retry', worker);
+        instance.start(5);
     });
 });

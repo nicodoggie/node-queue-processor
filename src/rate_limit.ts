@@ -4,6 +4,7 @@ import { logger } from './logger';
 class RateLimitReached extends Error {
     constructor () {
         super('Rate limit reached');
+        (<any>Object).setPrototypeOf(this, RateLimitReached.prototype);
     }
 }
 
@@ -107,7 +108,7 @@ class RateLimit {
     }
 
     async tick() {
-        this.lastCount = 0; //(await this.counter.tick());
+        this.lastCount = (await this.counter.tick()) as number;
         logger.trace(`event:rate_limit:tick`, { count: this.lastCount });
         if (this.lastCount > this.options.process_per_period) {
             throw new RateLimitReached();
@@ -120,4 +121,4 @@ class RateLimit {
     }
 }
 
-export { RateLimit, RedisCounter, LocalCounter };
+export { RateLimit, RedisCounter, LocalCounter, RateLimitReached };

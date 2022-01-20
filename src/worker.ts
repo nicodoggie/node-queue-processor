@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import { logger } from './logger';
-import { RateLimit } from './rate_limit';
+import { RateLimit, RateLimitReached } from './rate_limit';
 import { EventEmitter } from 'events';
 
 class Worker extends EventEmitter {
@@ -37,7 +37,11 @@ class Worker extends EventEmitter {
             // should return true for success
             return await this.process(data);
         } catch (error) {
-            this.emit('error', new Error(error.message));
+            if (error instanceof RateLimitReached) {
+                logger.child({ id: this.id }).trace(`rate limit triggered`);
+            } else {
+                this.emit('error', new Error(error.message));
+            }
             // failed
             return false;
         }
