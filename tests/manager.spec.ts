@@ -140,7 +140,6 @@ describe('manager class', () => {
         }
 
         const processor:any = async (data:any) => {
-            console.log(new Date().getTime());
             expect(data).to.equal(messageData);
         };
         const worker = new Worker(

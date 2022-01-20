@@ -37,17 +37,18 @@ abstract class Counter {
  */
 
 class LocalCounter extends Counter {
-    constructor(count:number = 0, expiry:number = null) {
-        super(count, expiry);
-        setInterval(this.reset, expiry * 1000)
+    constructor(expiry:number = null) {
+        super(0, expiry);
+        setInterval(this.reset.bind(this), expiry * 1000)
     }
 
     async tick() {
-        logger.trace(`event:local:tick`);
+        logger.trace(`event:local:tick:${this.counter}`);
         return ++this.counter;
     }
 
     reset() {
+        logger.trace(`event:local:reset:${this.counter}`);
         this.counter=0;
     }
 }
@@ -101,7 +102,7 @@ class RateLimit {
         this.options = options;
         this.config = config;
         // default local counter
-        this.counter = new LocalCounter();
+        this.counter = new LocalCounter(this.options.period);
         if (config !== null) {
             this.counter = new RedisCounter(this.config, this.options.period);
         }
